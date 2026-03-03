@@ -1,0 +1,18 @@
+FROM php:8.2-apache
+
+# Instalar dependencias necesarias
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    zip \
+    unzip \
+    && docker-php-ext-install pdo pdo_mysql
+
+# Habilitar módulos necesarios
+RUN a2enmod rewrite headers
+
+# Cargar configuración extra de Apache (CORS + AllowOverride)
+COPY apache-config.conf /etc/apache2/conf-available/decoreform.conf
+RUN a2enconf decoreform
+
+# DocumentRoot estándar
+WORKDIR /var/www/html

@@ -1,0 +1,47 @@
+FROM php:8.2-apache
+
+# Instalar dependencias del sistema
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+# Instalar extensiones PHP (PDO MySQL es lo más importante)
+RUN docker-php-ext-install \
+    pdo \
+    pdo_mysql \
+    mysqli \
+    mbstring \
+    zip
+
+# Habilitar mod_rewrite de Apache
+RUN a2enmod rewrite
+
+# Configurar Apache - VERSIÓN CORREGIDA (una sola línea)
+RUN echo '<VirtualHost *:80>\n\
+ServerAdmin webmaster@localhost\n\
+DocumentRoot /var/www/html\n\
+<Directory /var/www/html>\n\
+    Options Indexes FollowSymLinks\n\
+    AllowOverride All\n\
+    Require all granted\n\
+    RewriteEngine On\n\
+    RewriteCond %{REQUEST_FILENAME} !-f\n\
+    RewriteCond %{REQUEST_FILENAME} !-d\n\
+    RewriteRule ^ index.php [L]\n\
+</Directory>\n\
+ErrorLog ${APACHE_LOG_DIR}/error.log\n\
+CustomLog ${APACHE_LOG_DIR}/access.log combined\n\
+</VirtualHost>' > /etc/apache2/sites-available/000-default.conf
+
+# Exponer puerto
+EXPOSE 80
+
+# Comando por defecto
+CMD ["apache2-foreground"]

@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8" />
+  <link id="favicon" rel="icon" type="image/svg+xml" href="/logo_ControlObra_oscuro.svg" />
+  <script>
+    (function () {
+      var favicon = document.getElementById('favicon');
+      var dark = window.matchMedia('(prefers-color-scheme: dark)');
+      function updateFavicon(e) {
+        var base = e.matches
+          ? '/logo_ControlObra_claro.svg'
+          : '/logo_ControlObra_oscuro.svg';
+        favicon.href = base + '?v=' + Date.now();
+      }
+      updateFavicon(dark);
+      dark.addEventListener('change', updateFavicon);
+    })();
+  </script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ControlObra</title>
+</head>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/src/main.jsx"></script>
+</body>
+
+</html>

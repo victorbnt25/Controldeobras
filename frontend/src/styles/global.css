@@ -1,0 +1,508 @@
+/* ============================= */
+/* SISTEMA DE DISEÑO CORPORATIVO */
+/* ============================= */
+
+:root {
+  --fondo: #dde3ea;
+  --superficie: #ffffff;
+  --texto: #0f172a;
+  --atenuado: #64748b;
+  --borde: #c0c8d0;
+
+  --primario: #1f3a8a;
+  --primario-acento: #2563eb;
+
+  --peligro: #dc2626;
+  --exito: #16a34a;
+
+  --sombra-pequeña: 0 2px 8px rgba(15, 23, 42, 0.08);
+  --sombra-media: 0 8px 24px rgba(15, 23, 42, 0.12);
+
+  --radio-borde: 2px;
+}
+
+/* ============================= */
+/* BASE GLOBAL */
+/* ============================= */
+
+body {
+  background: var(--fondo);
+  color: var(--texto);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+/* ============================= */
+/* REFINAMIENTO DE BOOTSTRAP */
+/* ============================= */
+
+.btn {
+  border-radius: 2px;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.btn-primary {
+  background-color: var(--primario-acento);
+  border-color: var(--primario-acento);
+}
+
+.btn-primary:hover {
+  background-color: var(--primario);
+  border-color: var(--primario);
+}
+
+.btn-outline-secondary {
+  border-color: var(--borde);
+  border-radius: 2px;
+  background-color: #0f172a;
+  color: #ffffff;
+}
+
+.btn-outline-secondary:hover {
+  color: #000000;
+  background-color: #fff;
+}
+
+.btn-outline-danger {
+  color: var(--peligro);
+  border-color: var(--peligro);
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  color: #fff;
+  background-color: var(--peligro);
+  border-color: var(--peligro);
+}
+
+.btn-outline-success {
+  color: var(--exito);
+  border-color: var(--exito);
+  background-color: transparent;
+}
+
+.btn-outline-success:hover {
+  color: #fff;
+  background-color: var(--exito);
+  border-color: var(--exito);
+}
+
+.form-control,
+.form-select,
+textarea {
+  border-radius: 2px;
+  border: 1px solid var(--borde);
+  font-size: 15px;
+  border-color: rgba(15, 23, 42, 0.65);
+  color: #000000 !important;
+  font-weight: 700 !important;
+}
+
+.form-control::placeholder,
+textarea::placeholder {
+  color: #94a3b8 !important;
+  font-weight: 400 !important;
+}
+
+.form-label {
+  color: #0f172a;
+  font-size: 15px;
+  font-weight: bold;
+}
+
+.acciones-formulario {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--borde);
+  flex-wrap: wrap;
+}
+
+.acciones-formulario button.btn-outline-danger {
+  margin-right: auto;
+}
+
+.form-control:focus,
+.form-select:focus,
+textarea:focus {
+  border-color: rgba(37, 99, 235, 0.45);
+  box-shadow: 0 0 0 0.2rem rgba(37, 99, 235, 0.12);
+  outline: none;
+}
+
+/* ============================= */
+/* DISTRIBUCIÓN (LAYOUT) */
+/* ============================= */
+
+.contenedor-aplicacion {
+  display: flex;
+  height: 100vh;
+}
+
+.diseño-corporativo {
+  background: var(--fondo);
+}
+
+/* ============================= */
+/* MENÚ LATERAL (SIDEBAR) */
+/* ============================= */
+
+.menu-lateral {
+  width: 240px;
+  background: #0f172a;
+  color: #ffffff;
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid rgba(255, 255, 255, 0.06);
+  transition: transform 0.3s ease;
+  z-index: 1050;
+}
+
+.cabecera-menu {
+  padding: 1.5rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.titulo-marca {
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.subtitulo-marca {
+  font-size: 0.8rem;
+  opacity: 0.6;
+  margin-top: 0.25rem;
+}
+
+.lista-navegacion {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  gap: 0.25rem;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.enlace-menu {
+  color: #cbd5e1;
+  text-decoration: none;
+  padding: 0.6rem 0.75rem;
+  border-radius: 2px;
+  font-size: 0.92rem;
+  transition: background 0.15s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.enlace-menu i {
+  font-size: 1.1rem;
+}
+
+.enlace-menu:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.enlace-menu.active {
+  background: rgba(37, 99, 235, 0.22);
+  color: #ffffff;
+  border-left: 3px solid var(--primario-acento);
+}
+
+.pie-menu {
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+
+}
+
+.texto-usuario {
+  color: #ffffff;
+  font-size: large;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+
+/* Capa para cerrar menú en movil */
+.capa-superpuesta-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1040;
+}
+
+.capa-superpuesta-menu.activa {
+  display: block;
+}
+
+/* ============================= */
+/* BARRA SUPERIOR (TOPBAR) */
+/* ============================= */
+
+.barra-superior-movil {
+  height: 64px;
+  background: var(--superficie);
+  border-bottom: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1.5rem;
+  position: sticky;
+  top: 0;
+  z-index: 1030;
+}
+
+.titulo-barra-superior {
+  font-weight: 700;
+  font-size: 1rem;
+}
+
+/* ============================= */
+/* CONTENIDO PRINCIPAL */
+/* ============================= */
+
+.contenido-principal {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: var(--fondo);
+  min-width: 0;
+  /* Para evitar desbordamientos de flex */
+}
+
+.envoltura-contenido {
+  padding: 1.5rem;
+  overflow-y: auto;
+  height: 100%;
+}
+
+/* ============================= */
+/* CABECERA DE PÁGINA */
+/* ============================= */
+
+.cabecera-pagina {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.titulo-pagina {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 0;
+}
+
+.subtitulo-pagina {
+  color: var(--atenuado);
+  font-size: 0.95rem;
+}
+
+/* ============================= */
+/* TARJETAS (CARDS) */
+/* ============================= */
+
+.tarjeta-corporativa {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-pequeña);
+  background: var(--superficie);
+}
+
+.tarjeta-cliente {
+  background: var(--superficie);
+  border-radius: 2px;
+  box-shadow: var(--sombra-media);
+  transition: transform 0.15s ease;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-top: 3px solid var(--primario);
+}
+
+.tarjeta-cliente:hover {
+  transform: translateY(-4px);
+}
+
+.cabecera-tarjeta-cliente {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border-bottom: 2px solid #000000;
+  background-color: rgba(15, 23, 42, 0.02);
+}
+
+/* ============================= */
+/* DASHBOARD / RESUMEN */
+/* ============================= */
+
+.contenedor-resumen {
+  padding: 1rem;
+}
+
+.rejilla-kpi {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.tarjeta-kpi {
+  background: white;
+  border-radius: 2px;
+  padding: 1.5rem;
+  box-shadow: var(--sombra-media);
+  display: flex;
+  flex-direction: column;
+  border-left: 5px solid #ccc;
+}
+
+.titulo-kpi {
+  font-size: 0.9rem;
+  color: var(--atenuado);
+  font-weight: bold;
+  text-transform: uppercase;
+}
+
+.valor-kpi {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-top: 0.5rem;
+}
+
+.kpi-rojo {
+  border-left-color: var(--peligro);
+}
+
+.kpi-verde {
+  border-left-color: var(--exito);
+}
+
+.kpi-azul {
+  border-left-color: var(--primario-acento);
+}
+
+.kpi-morado {
+  border-left-color: #7c3aed;
+}
+
+/* ============================= */
+/* UTILIDADES */
+/* ============================= */
+
+.texto-atenuado {
+  color: var(--atenuado);
+}
+
+.texto-peligro {
+  color: var(--peligro);
+}
+
+.texto-exito {
+  color: var(--exito);
+}
+
+.fondo-exito {
+  background-color: var(--exito);
+}
+
+.fondo-peligro {
+  background-color: var(--peligro);
+}
+
+.divisor-navegacion {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.08);
+  margin: 1rem 0;
+}
+
+/* Ajustes Responsive */
+@media (max-width: 768px) {
+  .menu-lateral {
+    position: fixed;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(-100%);
+    z-index: 1060;
+  }
+
+  .menu-lateral.abierto {
+    transform: translateX(0);
+  }
+
+  .pie-menu {
+    /* Safe area spacing so logout button is not obscured by soft mobile OS buttons */
+    padding-bottom: calc(1.5rem + env(safe-area-inset-bottom, 25px));
+  }
+
+  /* Asegurar que el boton cancelar etc. no se salgan en móviles pequeños */
+  .acciones-formulario {
+    flex-wrap: wrap;
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  .acciones-formulario button {
+    width: 100%;
+    margin: 0 !important;
+  }
+
+  .contenedor-aplicacion {
+    flex-direction: column;
+  }
+
+  /* RE-DISEÑO DE TABLAS PARA MÓVIL (TARJETAS) */
+  table {
+    border: 0;
+  }
+
+  table thead {
+    display: none;
+  }
+
+  table tr {
+    display: block;
+    margin-bottom: 20px;
+    background-color: var(--superficie);
+    border: 1px solid var(--borde);
+    border-radius: var(--radio-borde);
+    box-shadow: var(--sombra-pequeña);
+    padding: 10px;
+  }
+
+  table td {
+    border-bottom: 1px solid #f1f5f9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9em;
+    padding: 10px 5px !important;
+  }
+
+  table td:last-child {
+    border-bottom: 0;
+  }
+
+  table td::before {
+    content: attr(data-label);
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--atenuado);
+    margin-right: 15px;
+  }
+}

@@ -1,0 +1,81 @@
+# ================================================
+# DECOREFORM - .gitignore
+# ================================================
+
+# ── SECRETOS Y CREDENCIALES ─────────────────────
+.env
+.env.local
+.env.production.local
+.env.development.local
+.env.test.local
+backend/config/db.production.php
+
+# ── DATOS DE MYSQL (Docker local) ───────────────
+mysql_data/
+
+# ── LOGS ────────────────────────────────────────
+*.log
+logs/
+backend/logs/
+backend_logs.txt
+
+# ── NODE / FRONTEND ─────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/build/
+frontend/.npm
+frontend/.eslintcache
+frontend/coverage/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ── PHP / COMPOSER ──────────────────────────────
+backend/vendor/
+backend/composer.phar
+# Mantener composer.json y composer.lock (necesarios para instalar)
+
+# ── ARCHIVOS DE DEBUG / TEMPORALES ──────────────
+fix_pw.php
+reset_admin.php
+update_pw.php
+run_fix.php
+fix_superadmin.php
+fix.sql
+hash.txt
+out.txt
+out_opts.txt
+resumen_proyecto.txt
+*.bak
+*.backup
+*.tmp
+*.swp
+*.swo
+*~
+
+# ── UPLOADS Y REPORTS (datos, no código) ────────
+uploads/*
+reports/*
+!uploads/.gitkeep
+!reports/.gitkeep
+
+# ── IDE ─────────────────────────────────────────
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# ── CERTIFICADOS SSL ────────────────────────────
+ssl/
+certs/
+*.pem
+*.key
+*.crt
+
+# ── DOCKER (overrides locales) ───────────────────
+docker-compose.override.yml
+docker-compose.local.yml
+docker-compose.dev.yml
+
+# ── BACKUP DE ARCHIVOS WEB ──────────────────────
+*.web_backup
