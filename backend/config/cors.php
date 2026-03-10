@@ -7,12 +7,13 @@ $allowed_origins = [
     'http://localhost:3003', 
     'http://localhost:3004', 
     'http://localhost:3002',
-    'https://decoreformab.totalh.com' // Posible dominio de producción según otros archivos
+    'https://decoreformab.totalh.com',
+    'https://controldeobras.es'
 ];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-// Permitir cualquier origen que termine en .totalh.com (ejemplo para producción) o localhost
-if (in_array($origin, $allowed_origins) || preg_match('/^https?:\/\/(localhost|.*\.totalh\.com)(:[0-9]+)?$/', $origin)) {    
+// Permitir cualquier origen que termine en .totalh.com, .controldeobras.es o localhost
+if (in_array($origin, $allowed_origins) || preg_match('/^https?:\/\/(localhost|.*\.totalh\.com|.*\.controldeobras\.es|controldeobras\.es)(:[0-9]+)?$/', $origin)) {    
     header("Access-Control-Allow-Origin: $origin");
 } else {
     // Fallback seguro

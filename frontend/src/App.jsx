@@ -82,12 +82,13 @@ const AppRouter = () => {
           <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
           <Route path="/politica-cookies" element={<PoliticaCookies />} />
 
-          {/* Rutas Privadas */}
-          <Route path="/*" element={usuario ? <PrivateLayoutRoutes /> : <Navigate to="/login" />} />
+          {/* Rutas Privadas / Protegidas */}
+          <Route path="/*" element={usuario ? <PrivateLayoutRoutes /> : <Navigate to="/login" replace />} />
           
-          {/* Catch-all Público (si no está logueado o no cae en las anteriores) */}
+          {/* Catch-all para el resto (404) */}
           <Route path="*" element={<NotFound />} />
         </Routes>
+
 
       </Router>
     </ConfigProvider>

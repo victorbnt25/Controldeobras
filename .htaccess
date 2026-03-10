@@ -4,7 +4,11 @@
   RewriteEngine On
   RewriteBase /
   
+  # Redirigir /api/... a /backend/api/... automáticamente
+  RewriteRule ^api/(.*)$ backend/api/$1 [L]
+  
   # Si el archivo o directorio solicitado existe físicamente, servirlo directamente
+
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
