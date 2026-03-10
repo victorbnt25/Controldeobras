@@ -1,8 +1,8 @@
 <?php
 // backend/config/database.php
 
-// 0. DEBUG TEMPORAL: Cambiar a 1 si hay error 500 persistente para ver el fallo
-ini_set('display_errors', 1);
+// 0. SEGURIDAD EN PRODUCCIÓN: Nunca mostrar errores en pantalla, todo al log
+ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 $_logDir = __DIR__ . '/../logs';
 if (!is_dir($_logDir)) { @mkdir($_logDir, 0755, true); }
