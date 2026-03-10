@@ -4,10 +4,8 @@ require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/auth.php';
 require_once __DIR__ . '/../config/database.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
+// El preflight OPTIONS se maneja centralizadamente en cors.php
+
 
 $conexion = obtenerConexionBD();
 requerirRol('usuario');

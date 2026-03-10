@@ -8,9 +8,8 @@ $conexion = obtenerConexionBD();
 requerirRol('usuario');
 $usuario_id = $_SESSION['usuario_id'];
 
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    enviarRespuesta([]);
-}
+// El preflight OPTIONS se maneja centralizadamente en cors.php
+
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':

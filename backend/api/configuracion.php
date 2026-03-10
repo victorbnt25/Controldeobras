@@ -6,14 +6,9 @@ ini_set('post_max_size', '20M');
 ini_set('memory_limit', '256M');
 ini_set('upload_max_filesize', '20M');
 
-// Manejo de preflight CORS (importante para evitar errores en algunos navegadores)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit;
-}
-
+// Manejo de preflight CORS centralizado en cors.php
+require_once __DIR__ . '/../config/cors.php';
 try {
-    require_once __DIR__ . '/../config/cors.php';
     require_once __DIR__ . '/../config/auth.php';
     require_once __DIR__ . '/../config/database.php';
     $conexion = obtenerConexionBD();

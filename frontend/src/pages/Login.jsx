@@ -8,11 +8,17 @@ export default function Login() {
     const [contraseña, setContraseña] = useState('');
     const [error, setError] = useState('');
     const [cargando, setCargando] = useState(false);
+    const [aceptaTerminos, setAceptaTerminos] = useState(false);
+    const [mostrarContraseña, setMostrarContraseña] = useState(false);
 
     const alEnviarFormulario = async (e) => {
         e.preventDefault();
         if (!nombreUsuario || !contraseña) {
             setError('Por favor, ingresa usuario y contraseña');
+            return;
+        }
+        if (!aceptaTerminos) {
+            setError('Debes aceptar los términos y condiciones para continuar');
             return;
         }
         setError('');
@@ -101,15 +107,69 @@ export default function Login() {
                     </div>
                     <div className="mb-4">
                         <label className="form-label fw-bold" style={{ fontSize: '0.8rem', letterSpacing: '0.5px', color: '#334155' }}>CONTRASEÑA</label>
-                        <input
-                            type="password"
-                            className="form-control shadow-none"
-                            placeholder="••••••••"
-                            value={contraseña}
-                            onChange={e => setContraseña(e.target.value)}
-                            id="inputPassword"
-                            style={{ fontSize: '1rem', padding: '0.75rem 1rem', backgroundColor: '#ffffff', borderRadius: '4px', border: '1px solid #c0c8d0', color: '#212529' }}
-                        />
+                        <div style={{ position: 'relative' }}>
+                            <input
+                                type={mostrarContraseña ? "text" : "password"}
+                                className="form-control shadow-none"
+                                placeholder="••••••••"
+                                value={contraseña}
+                                onChange={e => setContraseña(e.target.value)}
+                                id="inputPassword"
+                                style={{
+                                    fontSize: '1rem',
+                                    padding: '0.75rem 3rem 0.75rem 1rem',
+                                    backgroundColor: '#ffffff',
+                                    borderRadius: '4px',
+                                    border: '1px solid #c0c8d0',
+                                    color: '#212529',
+                                    width: '100%'
+                                }}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setMostrarContraseña(!mostrarContraseña)}
+                                style={{
+                                    position: 'absolute',
+                                    right: '10px',
+                                    top: '50%',
+                                    transform: 'translateY(-50%)',
+                                    background: 'none',
+                                    border: 'none',
+                                    color: '#64748b',
+                                    cursor: 'pointer',
+                                    padding: '5px',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}
+                                aria-label={mostrarContraseña ? "Ocultar contraseña" : "Mostrar contraseña"}
+                            >
+                                <i className={`bi ${mostrarContraseña ? 'bi-eye-slash' : 'bi-eye'} fs-5`}></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="mb-3">
+                        <div className="form-check text-start">
+                            <input
+                                className="form-check-input"
+                                type="checkbox"
+                                id="checkTerminos"
+                                checked={aceptaTerminos}
+                                onChange={e => setAceptaTerminos(e.target.checked)}
+                                style={{ cursor: 'pointer' }}
+                            />
+                            <label className="form-check-label" htmlFor="checkTerminos" style={{ fontSize: '0.85rem', color: '#475569', cursor: 'pointer' }}>
+                                He leído y acepto el <a href="/aviso-legal" target="_blank" rel="noopener noreferrer">Aviso Legal</a> y la <a href="/politica-privacidad" target="_blank" rel="noopener noreferrer">Política de Privacidad</a>.
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className="p-3 mb-3" style={{ backgroundColor: '#f8fafc', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+                        <p className="m-0" style={{ fontSize: '0.75rem', color: '#64748b', lineHeight: '1.4' }}>
+                            <i className="bi bi-info-circle me-1"></i>
+                            <strong>Aviso de datos:</strong> Al iniciar sesión, aceptas que tus datos y la información introducida se recojan y almacenen en nuestros servidores de hosting para la prestación del servicio.
+                        </p>
                     </div>
                     <motion.button
                         whileHover={{ scale: 1.02 }}

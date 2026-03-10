@@ -1,14 +1,22 @@
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { api } from '../services/api';
+import { useAuth } from './AuthContext';
 
 const ConfigContext = createContext(null);
 
 export const ConfigProvider = ({ children }) => {
+    const { usuario } = useAuth();
     const [configuracion, setConfiguracion] = useState(null);
     const [cargando, setCargando] = useState(true);
     const [error, setError] = useState(null);
 
     const cargarConfigDeApi = async () => {
+        // Solo intentar cargar si hay usuario
+        if (!usuario) {
+            setCargando(false);
+            return;
+        }
+        
         setCargando(true);
         try {
             const datos = await api.obtenerConfiguracion();
@@ -23,8 +31,13 @@ export const ConfigProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        cargarConfigDeApi();
-    }, []);
+        if (usuario) {
+            cargarConfigDeApi();
+        } else {
+            setConfiguracion(null);
+            setCargando(false);
+        }
+    }, [usuario]);
 
     const refrescarConfiguracion = async () => {
         await cargarConfigDeApi();

@@ -91,14 +91,19 @@ decoreforMAB/
 │   ├── .env                # API URL local
 │   └── .env.production     # API URL producción (/api)
 │
+├── database/               # Esquema inicial y procedimientos SQL
+│   ├── init.sql            # Schema principal
+│   ├── procedures.sql      # Procedimientos almacenados
+│   └── add_gastos_generales.sql
+│
 ├── backend/                # PHP API REST
 │   ├── api/                # Endpoints PHP
 │   ├── config/             # DB, CORS, Auth
 │   └── vendor/             # Dependencias Composer (no en repo)
 │
-├── init.sql                # Schema inicial de la BD
 ├── docker-compose.yml      # Docker para desarrollo local
 └── .env                    # Variables de entorno locales
+
 ```
 
 ---

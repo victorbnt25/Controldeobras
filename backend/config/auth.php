@@ -36,7 +36,19 @@ if (!isset($_SESSION['usuario_id'])) {
  * Función para obligar un rol específico y asegurar que no hay suplantación (Control de Autorización)
  */
 function requerirRol($rol) {
-    if (!isset($_SESSION['rol']) || $_SESSION['rol'] !== $rol) {
+    if (!isset($_SESSION['rol'])) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Acceso denegado. Permisos insuficientes para esta acción.']);
+        exit;
+    }
+
+    // El superusuario siempre tiene acceso a todo lo que un usuario normal puede hacer
+    if ($_SESSION['rol'] === 'superusuario') {
+        return;
+    }
+
+    // Si no es superusuario, debe coincidir exactamente
+    if ($_SESSION['rol'] !== $rol) {
         http_response_code(403);
         echo json_encode(['error' => 'Acceso denegado. Permisos insuficientes para esta acción.']);
         exit;
