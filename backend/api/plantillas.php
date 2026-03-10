@@ -11,7 +11,7 @@ $usuario_id = $_SESSION['usuario_id'];
 try {
     switch ($_SERVER['REQUEST_METHOD']) {
 
-        case 'GET':
+        case 'GET': // Listar o ver plantilla
             if (!isset($_GET['id'])) {
                 $consulta = $conexion->prepare(
                     "SELECT * FROM plantillas WHERE usuario_id = ? AND activo = 1 ORDER BY descripcion ASC"
@@ -35,7 +35,7 @@ try {
             }
             break;
 
-        case 'POST':
+        case 'POST': // Nueva plantilla
             $datos = json_decode(file_get_contents('php://input'), true);
 
             if (!$datos || empty(trim($datos['descripcion']))) {
@@ -61,7 +61,7 @@ try {
             echo json_encode(['id' => $conexion->lastInsertId()]);
             break;
 
-        case 'PUT':
+        case 'PUT': // Editar plantilla
             if (!isset($_GET['id'])) {
                 http_response_code(400);
                 echo json_encode(['error' => 'ID requerido']);
@@ -87,7 +87,7 @@ try {
             echo json_encode(['ok' => true]);
             break;
 
-        case 'DELETE':
+        case 'DELETE': // Borrado lógico
             if (!isset($_GET['id'])) {
                 http_response_code(400);
                 echo json_encode(['error' => 'ID requerido']);

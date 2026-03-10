@@ -78,7 +78,7 @@ export default function Clientes() {
 
   return (
     <div className="diseño-corporativo">
-      {/* CABECERA PRINCIPAL */}
+      {/* Cabecera principal */}
       <div className="cabecera-pagina mb-4 gap-3">
         <div>
           <h1 className="titulo-pagina">Gestión de Clientes</h1>
@@ -120,7 +120,7 @@ export default function Clientes() {
 
       {error && <div className="alert alert-danger">{error}</div>}
 
-      {/* SECCIÓN ANIMADA: BUSCADOR O FORMULARIO */}
+      {/* Buscador o formulario */}
       <AnimatePresence mode="wait">
         {!mostrarFormulario ? (
           <motion.div
@@ -187,7 +187,7 @@ export default function Clientes() {
         )}
       </AnimatePresence>
 
-      {/* GRID DE CLIENTES: Lista de tarjetas con todos los datos */}
+      {/* Listado de clientes */}
       <div className="row g-4" id="rejilla-clientes">
         <AnimatePresence>
           {clientesFiltrados.length > 0 ? (

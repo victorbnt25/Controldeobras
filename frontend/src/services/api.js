@@ -3,17 +3,15 @@ const API_URL = import.meta.env.VITE_API_URL ?? "/api";
 async function peticion(url, opciones = {}) {
   opciones.credentials = 'include';
 
-  // Evitar que respuestas GET agresivas se queden cacheadas en el navegador
   if (!opciones.method || opciones.method.toUpperCase() === 'GET') {
-    opciones.cache = 'no-store';
+    opciones.cache = 'no-store'; // Evitar cache en GET
   }
 
   let res;
   try {
     res = await fetch(url, opciones);
   } catch (err) {
-    // Error de red o CORS bloqueado — probablemente sesión expirada
-    window.dispatchEvent(new Event('sesionExpirada'));
+    window.dispatchEvent(new Event('sesionExpirada')); // Error de red o CORS
     throw new Error('Error de conexión. Por favor, inicia sesión de nuevo.');
   }
 
@@ -38,17 +36,13 @@ async function peticion(url, opciones = {}) {
 }
 
 export const api = {
-  /* =======================
-     RESUMEN / DASHBOARD
-  ======================= */
+  // Dashboard
   obtenerResumen: (filtros = {}) => {
     const parametros = new URLSearchParams(filtros);
     return peticion(`${API_URL}/resumen.php?${parametros.toString()}`);
   },
 
-  /* =======================
-     CALENDARIO
-  ======================= */
+  // Calendario
   obtenerCalendario: () => peticion(`${API_URL}/calendario.php`),
 
   planificarObra: (datos) =>
@@ -63,9 +57,7 @@ export const api = {
       method: "DELETE",
     }),
 
-  /* =======================
-     EMAIL / NOTIFICACIONES
-  ======================= */
+  // Email
   enviarEmail: (datos) =>
     peticion(`${API_URL}/enviar_email.php`, {
       method: "POST",
@@ -73,9 +65,7 @@ export const api = {
       body: JSON.stringify(datos),
     }),
 
-  /* =======================
-     CLIENTES
-  ======================= */
+  // Clientes
   obtenerClientes: () => peticion(`${API_URL}/clientes.php`),
 
   crearCliente: (datos) =>
@@ -97,9 +87,7 @@ export const api = {
       method: "DELETE",
     }),
 
-  /* =======================
-     TRABAJADORES
-  ======================= */
+  // Trabajadores
   obtenerTrabajadores: () => peticion(`${API_URL}/trabajadores.php`),
 
   crearTrabajador: (datos) =>
@@ -121,9 +109,7 @@ export const api = {
       method: "DELETE",
     }),
 
-  /* =======================
-     PROVEEDORES
-  ======================= */
+  // Proveedores
   obtenerProveedores: () => peticion(`${API_URL}/proveedores.php`),
 
   crearProveedor: (datos) =>
@@ -145,9 +131,7 @@ export const api = {
       method: "DELETE",
     }),
 
-  /* =======================
-     PRESUPUESTOS
-  ======================= */
+  // Presupuestos
 
   obtenerPresupuestos: () =>
     peticion(`${API_URL}/presupuestos.php`),
@@ -184,7 +168,7 @@ export const api = {
   obtenerProximoCorrelativo: (tipo) =>
     peticion(`${API_URL}/correlativos.php?tipo=${tipo}`),
 
-  // Guardar documento (Excel o PDF)
+  // Exportar documentos
   exportarDocumento: async (cargaUtil) => {
     let respuesta;
     try {
@@ -215,9 +199,7 @@ export const api = {
     return respuesta.blob();
   },
 
-  /* =======================
-     FACTURAS
-  ======================= */
+  // Facturas
   obtenerFacturas: (filtros = {}) => {
     const parametros = new URLSearchParams(filtros);
     return peticion(`${API_URL}/facturas.php?${parametros.toString()}`);
@@ -244,9 +226,7 @@ export const api = {
       method: "DELETE",
     }),
 
-  /* =======================
-     OBRAS
-  ======================= */
+  // Obras
 
   obtenerObras: () =>
     peticion(`${API_URL}/obras.php`),
@@ -289,9 +269,7 @@ export const api = {
       method: "DELETE",
     }),
 
-  /* =======================
-     GASTOS GENERALES
-  ======================= */
+  // Gastos Generales
   obtenerGastosGenerales: (year, month) => peticion(`${API_URL}/gastos_generales.php?year=${year}&month=${month}`),
   crearGastoGeneral: (datos) => peticion(`${API_URL}/gastos_generales.php`, {
     method: "POST",
@@ -307,9 +285,7 @@ export const api = {
     method: "DELETE"
   }),
 
-  /* =======================
-     CONFIGURACIÓN
-  ======================= */
+  // Configuración
   obtenerConfiguracion: () => peticion(`${API_URL}/configuracion.php`),
 
   actualizarConfiguracion: (datos) =>
@@ -319,9 +295,7 @@ export const api = {
       body: JSON.stringify(datos),
     }),
 
-  /* =======================
-     PLANTILLAS
-  ======================= */
+  // Plantillas
   obtenerPlantillas: () => peticion(`${API_URL}/plantillas.php`),
 
   crearPlantilla: (datos) =>
@@ -343,9 +317,7 @@ export const api = {
       method: "DELETE",
     }),
 
-  /* =======================
-     AUTENTICACIÓN Y USUARIOS
-  ======================= */
+  // Auth y Usuarios
   comprobarSesion: () => peticion(`${API_URL}/usuario_actual.php`),
 
   iniciarSesion: (username, password) =>

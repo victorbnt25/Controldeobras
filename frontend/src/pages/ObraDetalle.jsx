@@ -100,7 +100,7 @@ export default function ObraDetalle() {
     }
   };
 
-  // --- GESTIÓN DE GASTOS GENERALES ---
+  // --- GESTIÓN DE MATERIALES ---
   const alAgregarGasto = async (e, esExtra = false) => {
     e.preventDefault();
     if (!nuevoGasto) return;
@@ -110,10 +110,10 @@ export default function ObraDetalle() {
       const importeFinal = tipoMovimiento === 'gasto' ? Math.abs(parseFloat(nuevoGasto)) : -Math.abs(parseFloat(nuevoGasto));
 
       if (gastoEditar) {
-        // MODO EDICIÓN
+        // Edición
         await api.actualizarGasto(gastoEditar.id, importeFinal, nuevoConcepto);
       } else {
-        // MODO CREACIÓN
+        // Creación
         await api.crearGasto(id, importeFinal, nuevoConcepto, esExtra ? 1 : 0);
       }
 
@@ -299,7 +299,7 @@ export default function ObraDetalle() {
 
       // Añadir Mano de Obra si existen
       if (obra.jornadas && obra.jornadas.length > 0) {
-        // Separar trabajadores de proveedores
+        // Trabajadores vs Proveedores
         const jornadasTrabajadores = obra.jornadas.filter(j => !j.proveedor_id);
         const jornadasProveedores = obra.jornadas.filter(j => j.proveedor_id);
 
@@ -415,7 +415,7 @@ export default function ObraDetalle() {
         </div>
       )}
 
-      {/* AVISO DE OBRA BLOQUEADA POR FACTURACIÓN */}
+      {/* Aviso de bloqueo por factura */}
       {facturaGenerada && (
         <div className="alert alert-info border-0 shadow-sm mb-4 d-flex align-items-center" role="alert">
           <i className="bi bi-lock-fill fs-3 me-3"></i>
@@ -426,7 +426,7 @@ export default function ObraDetalle() {
         </div>
       )}
 
-      {/* CABECERA DE NAVEGACIÓN */}
+      {/* Cabecera y acciones */}
       <div className="cabecera-pagina mb-4 gap-3 align-items-start align-items-md-center">
         <div className="d-flex align-items-center gap-3">
           <button
@@ -455,7 +455,7 @@ export default function ObraDetalle() {
         </div>
       </div>
 
-      {/* TARJETAS DE KPI FINANCIEROS */}
+      {/* Indicadores financieros */}
       <div className="rejilla-kpi mb-4">
         <div className="tarjeta-kpi kpi-azul">
           <span className="titulo-kpi">Presupuesto Total</span>

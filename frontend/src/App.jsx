@@ -75,17 +75,16 @@ const AppRouter = () => {
     <ConfigProvider>
       <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
         <Routes>
-          {/* Rutas Públicas */}
+          {/* Rutas públicas */}
           <Route path="/" element={!usuario ? <Landing /> : <Navigate to={usuario.rol === 'superusuario' ? '/usuarios' : '/dashboard'} />} />
           <Route path="/login" element={!usuario ? <Login /> : <Navigate to={usuario.rol === 'superusuario' ? '/usuarios' : '/dashboard'} />} />
           <Route path="/aviso-legal" element={<AvisoLegal />} />
           <Route path="/politica-privacidad" element={<PoliticaPrivacidad />} />
           <Route path="/politica-cookies" element={<PoliticaCookies />} />
 
-          {/* Rutas Privadas / Protegidas */}
+          {/* Rutas privadas */}
           <Route path="/*" element={usuario ? <PrivateLayoutRoutes /> : <Navigate to="/login" replace />} />
           
-          {/* Catch-all para el resto (404) */}
           <Route path="*" element={<NotFound />} />
         </Routes>
 
@@ -105,4 +104,3 @@ function App() {
 }
 
 export default App;
-// Forzar HMR App

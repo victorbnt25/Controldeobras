@@ -6,8 +6,7 @@ require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/auth.php'; // Required for auth check
 require_once __DIR__ . '/../config/database.php';
 
-// Solo el superusuario puede acceder a este panel
-requerirRol('superusuario');
+requerirRol('superusuario'); // Acceso restringido al admin
 
 $conexion = obtenerConexionBD();
 $metodo = $_SERVER['REQUEST_METHOD'];
@@ -61,15 +60,13 @@ try {
             $parametros[] = $datos['username'];
         }
         if (isset($datos['rol'])) {
-            // No permitir que un usuario se cambie su propio rol (para no quitarse el superusuario)
-            if ($id != $_SESSION['usuario_id']) {
+            if ($id != $_SESSION['usuario_id']) { // Protección contra cambios propios
                 $actualizaciones[] = "rol = ?";
                 $parametros[] = $datos['rol'];
             }
         }
         if (isset($datos['activo'])) {
-            // No permitir que un usuario se desactive a sí mismo
-            if ($id != $_SESSION['usuario_id']) {
+            if ($id != $_SESSION['usuario_id']) { // Protección contra autodesactivación
                 $actualizaciones[] = "activo = ?";
                 $parametros[] = (int)$datos['activo'];
             }
@@ -94,8 +91,7 @@ try {
         echo json_encode(['error' => 'Método no permitido']);
     }
 } catch (PDOException $e) {
-    // Manejo de error de entrada duplicada (1062) para nombre de usuario único
-    if ($e->getCode() == 23000) {
+    if ($e->getCode() == 23000) { // Usuario duplicado
         http_response_code(409);
         echo json_encode(['error' => 'El nombre de usuario ya existe']);
     } else {

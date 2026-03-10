@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const datos = await api.comprobarSesion();
             if (datos && datos.usuario) {
+              // Solo intentar cargar si hay sesión
                 setUsuario(datos.usuario);
             } else {
                 setUsuario(null);
@@ -55,4 +56,4 @@ export const AuthProvider = ({ children }) => {
         </AuthContext.Provider>
     );
 };
-// Force HMR reload AuthContext
+export default AuthProvider;

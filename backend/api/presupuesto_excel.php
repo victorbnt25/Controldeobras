@@ -49,7 +49,7 @@ $hoja->getColumnDimension('E')->setWidth(12);
 $hoja->getColumnDimension('F')->setWidth(15);
 $hoja->getColumnDimension('G')->setWidth(22);
 
-// Bloque Cabecera (Filas 1-3)
+// Cabecera (Filas 1-3)
 $empresaNombre = trim(($configuracion['nombre_empresa'] ?? 'DECOREFORM.A.B.'));
 $empresaEmail = $configuracion['email_empresa'] ?? '';
 $numero = $presupuesto['numero_presupuesto'] ?? '000/00';
@@ -107,7 +107,7 @@ $hoja->getStyle('G1:G3')->getAlignment()->setWrapText(false);
 // Bordes finos 
 $hoja->getStyle('A1:F3')->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
 
-// Datos del Cliente (Filas 5-7)
+// Datos del Cliente
 $filaC = 5;
 $hoja->setCellValue('A'.$filaC, 'Cliente:  ' . ($cliente['nombre'] ?? ''));
 $hoja->mergeCells('A'.$filaC.':C'.$filaC);
@@ -143,7 +143,7 @@ $hoja->getStyle('A7:B7')->getBorders()->getOutline()->setBorderStyle(Border::BOR
 $hoja->getStyle('C7:D7')->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
 $hoja->getStyle('E7:G7')->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
 
-// Cabecera Tabla (Fila 9)
+// Cabecera de la tabla
 $filaT = 9;
 $hoja->setCellValue('A'.$filaT, 'Descripción');
 $hoja->mergeCells("A$filaT:D$filaT");
@@ -164,16 +164,7 @@ foreach ($partidas as $item) {
     $precio = floatval($item['precio_unitario'] ?? 0);
     $importe = $cantidad * $precio;
     
-    // Excluir de la suma si es un campo de "subtotal" o "suma informativa"
-    $descMayus = strtoupper($item['descripcion'] ?? '');
-    $esSuma = false;
-    foreach (['SUMA', 'RESTO', 'SUBTOTAL', 'TOTAL'] as $palabraClave) {
-        if (strpos($descMayus, $palabraClave) === 0) {
-            $esSuma = true;
-            break;
-        }
-    }
-
+    // Solo sumar conceptos reales
     if (!$esSuma) {
         $totalBruto += $importe;
         if ($cantidad > 0 && $precio > 0) {
@@ -244,9 +235,7 @@ $textoPie = sprintf("%s %s   DIRECCIÓN %s %s   TELÉFONO %s", $f1, $f2, $f3, $f
 
 $formato = $datos['format'] ?? 'excel';
 
-if ($formato === 'pdf') {
-    // ===== PDF: Mpdf directo con posicionamiento exacto via $mpdf->y =====
-    // Limpiar cualquier output previo y suprimir warnings
+if ($formato === 'pdf') { // Generar PDF con mPDF
     while (ob_get_level()) { ob_end_clean(); }
     error_reporting(0);
     
@@ -259,7 +248,7 @@ if ($formato === 'pdf') {
     $writerHtml->save('php://output');
     $htmlBody = ob_get_clean();
     
-    // CSS: tabla de contenido SIN border-bottom (queda abierta por abajo para unirse al footer)
+    // CSS para el PDF
     $cssExtra = '<style>
         table { border-collapse: collapse; width: 100%; border-left: 2px solid #000; border-right: 2px solid #000; border-top: 2px solid #000; }
         td { border: 1px solid #ccc; padding: 3px; }
@@ -298,7 +287,7 @@ if ($formato === 'pdf') {
     $tg = number_format($totalGeneral,2,',','.') . ' €';
     $ip = number_format($ivaPorcentaje,2) . '%';
 
-    // Footer: cierra el rectángulo por abajo
+    // Pie de página del PDF
     $mpdf->WriteHTML('
     <table width="100%" style="border-collapse:collapse;border-left:2px solid #000;border-right:2px solid #000;border-bottom:2px solid #000;border-top:1px solid #ccc;font-family:Times New Roman">
       <tr>
@@ -320,8 +309,7 @@ if ($formato === 'pdf') {
     $mpdf->Output($nombreArchivoNum . '.pdf', 'D');
     exit;
 
-} else {
-    // ===== EXCEL =====
+} else { // Generar Excel
     $hoja->getStyle("A$filaActual:G$filaActual")->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN);
     $hoja->setCellValue('A'.$filaActual, 'Total Bruto');
     if (count($sumFormulaParts) > 0) { $hoja->setCellValue('C'.$filaActual, "=" . implode("+", $sumFormulaParts)); }

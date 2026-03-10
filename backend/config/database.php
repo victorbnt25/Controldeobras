@@ -1,7 +1,7 @@
 <?php
 // backend/config/database.php
 
-// 0. SEGURIDAD EN PRODUCCIÓN: Nunca mostrar errores en pantalla, todo al log
+// Config de errores para producción
 ini_set('display_errors', 0);
 ini_set('log_errors', 1);
 $_logDir = __DIR__ . '/../logs';
@@ -9,13 +9,10 @@ if (!is_dir($_logDir)) { @mkdir($_logDir, 0755, true); }
 ini_set('error_log', $_logDir . '/php_error.log');
 error_reporting(E_ALL);
 
-// Carga credenciales según entorno:
-// - Producción: backend/config/db.production.php (NO está en el repo, créalo en el servidor)
-// - Local/Docker: variables de entorno del docker-compose o valores por defecto
 $_dbProdConfig = __DIR__ . '/db.production.php';
-if (file_exists($_dbProdConfig)) {
+if (file_exists($_dbProdConfig)) { // Cargar configuración de producción
     require_once $_dbProdConfig;
-} else {
+} else { // Valores locales (Docker)
     define('DB_HOST', getenv('DB_HOST') ?: 'mysql');
     define('DB_NAME', getenv('DB_NAME') ?: 'reformas_db');
     define('DB_USER', getenv('DB_USER') ?: 'root');
@@ -27,9 +24,7 @@ function obtenerConexionBD() {
         $opciones = [
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
             PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
-            // Desactiva la emulación de prepared statements. Fuerza statements nativos de MySQL para prevenir inyecciones SQL.
-            PDO::ATTR_EMULATE_PREPARES => false,
-            // Prevenir carga estática en ciertos contextos
+            PDO::ATTR_EMULATE_PREPARES => false, // Usar prepared statements nativos
             PDO::MYSQL_ATTR_FOUND_ROWS => true
         ];
 
@@ -40,12 +35,9 @@ function obtenerConexionBD() {
             $opciones
         );
     } catch (PDOException $e) {
-        // ERROR GENÉRICO EN PRODUCCIÓN: NUNCA MOSTRAR $e->getMessage() con credenciales
-        error_log('Error de conexión a la BD: ' . $e->getMessage()); // Registro seguro interno en logs
+        error_log('Error BD: ' . $e->getMessage()); // Log interno del fallo
         http_response_code(500);
-        echo json_encode([
-            'error' => 'Error interno del servidor. No se pudo conectar a la base de datos.'
-        ]);
+        echo json_encode(['error' => 'Error de conexión a la base de datos.']);
         exit;
     }
 }

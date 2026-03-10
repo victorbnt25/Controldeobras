@@ -9,7 +9,7 @@ $conexion = obtenerConexionBD();
 requerirRol('usuario');
 $usuario_id = $_SESSION['usuario_id'];
 
-$tipo = $_GET['tipo'] ?? 'presupuesto'; 
+$tipo = $_GET['tipo'] ?? 'presupuesto'; // Tipo de documento
 $añoLargo = date('Y');
 $añoCorto = date('y'); 
 
@@ -21,14 +21,13 @@ if ($tipo === 'factura') {
     $columna = 'numero_presupuesto';
 }
 
-// Buscamos el último registro que siga el formato xxx/yy para este año
+// Buscar el último registro del año actual (formato xxx/yy)
 $consulta = $conexion->prepare("SELECT $columna FROM $tabla WHERE usuario_id = ? AND $columna LIKE ? ORDER BY id DESC LIMIT 1");
 $consulta->execute([$usuario_id, "%/$añoCorto"]);
 $ultimo = $consulta->fetchColumn();
 
 $proximoNum = 1;
-if ($ultimo) {
-    // Intentamos extraer la parte numérica
+if ($ultimo) { // Extraer parte numérica
     $partes = explode('/', $ultimo);
     if (count($partes) >= 1) {
         $ultimoNum = (int)$partes[0];
@@ -36,7 +35,7 @@ if ($ultimo) {
     }
 }
 
-// Formatear a 001/26
+// Formato final 001/26
 $formateado = str_pad($proximoNum, 3, '0', STR_PAD_LEFT) . '/' . $añoCorto;
 
 echo json_encode(['next' => $formateado, 'year' => $añoLargo]);

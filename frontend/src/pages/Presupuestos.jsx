@@ -11,7 +11,7 @@ export default function Presupuestos() {
   const [error, setError] = useState(null);
   const navegar = useNavigate();
 
-  // Filtros
+  // Filtros de búsqueda
   const [filtroEstado, setFiltroEstado] = useState("todos");
   const [buscaTexto, setBuscaTexto] = useState("");
   const [filtroFecha, setFiltroFecha] = useState("");
@@ -22,7 +22,7 @@ export default function Presupuestos() {
   const [mostrarFormulario, setMostrarFormulario] = useState(false);
   const [presupuestoEnEdicion, setPresupuestoEnEdicion] = useState(null);
 
-  // Modal de confirmaciones web
+  // Modales y estados de UI
   const [modalConfirmacion, setModalConfirmacion] = useState({
     visible: false,
     mensaje: "",
@@ -126,7 +126,7 @@ export default function Presupuestos() {
                 "success",
                 "Crear Obra Ahora"
               );
-            }, 600); // Dar tiempo a que termine la animación del cierre del modal anterior
+            }, 600); // Esperar a la animación del modal
           }
         } catch (err) {
           mostrarNotificacion("Error al actualizar estado", "danger");
@@ -384,7 +384,7 @@ export default function Presupuestos() {
               <div key={p.id} className="col-12 col-md-6 col-xl-4 d-flex">
                 <div className="card shadow border-0 position-relative w-100 flex-column" style={{ borderRadius: '12px', transition: 'all 0.3s ease' }}>
 
-                  {/* Etiqueta color superior para destacar estado */}
+                  {/* Color de estado */}
                   <div style={{ height: '6px', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', backgroundColor: p.estado === 'aceptado' ? '#10b981' : p.estado === 'pendiente' ? '#f59e0b' : p.estado === 'rechazado' ? '#ef4444' : '#6b7280' }}></div>
 
                   <div className="card-body p-4 d-flex flex-column h-100">

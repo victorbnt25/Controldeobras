@@ -49,7 +49,7 @@ $hoja->getColumnDimension('E')->setWidth(12);
 $hoja->getColumnDimension('F')->setWidth(15);
 $hoja->getColumnDimension('G')->setWidth(22);
 
-// Bloque Cabecera (Filas 1-3)
+// Cabecera (Filas 1-3)
 $empresaNombre = trim(($configuracion['nombre_empresa'] ?? 'DECOREFORM.A.B.'));
 $empresaEmail = $configuracion['email_empresa'] ?? '';
 $numero = $factura['numero_factura'] ?? '000/00';
@@ -109,7 +109,7 @@ $hoja->getStyle('G1:G3')->getAlignment()->setWrapText(false);
 // Bordes finos 
 $hoja->getStyle('A1:F3')->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
 
-// Datos del Cliente (Filas 5-7)
+// Datos del Cliente
 $filaC = 5;
 $hoja->setCellValue('A'.$filaC, 'Cliente:  ' . ($cliente['nombre'] ?? ''));
 $hoja->mergeCells('A'.$filaC.':C'.$filaC);
@@ -145,7 +145,7 @@ $hoja->getStyle('A7:B7')->getBorders()->getOutline()->setBorderStyle(Border::BOR
 $hoja->getStyle('C7:D7')->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
 $hoja->getStyle('E7:G7')->getBorders()->getOutline()->setBorderStyle(Border::BORDER_THIN);
 
-// Cabecera Tabla (Fila 9)
+// Cabecera de la tabla
 $filaT = 9;
 $hoja->setCellValue('A'.$filaT, 'Descripción');
 $hoja->mergeCells("A$filaT:D$filaT");
@@ -166,16 +166,7 @@ foreach ($partidas as $item) {
     $precio = floatval($item['precio_unitario'] ?? 0);
     $importe = $cantidad * $precio;
     
-    // Excluir de la suma si es un campo de "subtotal" o "suma informativa"
-    $descMayus = strtoupper($item['descripcion'] ?? '');
-    $esSuma = false;
-    foreach (['SUMA', 'RESTO', 'SUBTOTAL', 'TOTAL'] as $palabraClave) {
-        if (strpos($descMayus, $palabraClave) === 0) {
-            $esSuma = true;
-            break;
-        }
-    }
-
+    // Excluir sumatorios del total bruto
     if (!$esSuma) {
         $totalBruto += $importe;
         if ($cantidad > 0 && $precio > 0) {
@@ -260,7 +251,7 @@ if ($formato === 'pdf') {
     $htmlBody = str_replace('</head>', $cssExtra.'</head>', $htmlBody);
     if (strpos($htmlBody,'</head>')===false) { $htmlBody = $cssExtra.$htmlBody; }
 
-    // Footer de 3 filas ≈ 30mm, más margen
+    // Generar PDF con mPDF
     $footerH = 32;
     $mpdf = new \Mpdf\Mpdf(['format'=>'A4','margin_top'=>10,'margin_right'=>10,'margin_bottom'=>10,'margin_left'=>10,'tempDir'=>sys_get_temp_dir()]);
     $mpdf->WriteHTML($htmlBody);
@@ -271,9 +262,7 @@ if ($formato === 'pdf') {
         $mpdf->AddPage();
         $libre = ($mpdf->h - $mpdf->bMargin) - $mpdf->y;
     }
-    $gap = $libre - $footerH;
-
-    // Div espaciador: solo bordes LATERALES para cerrar el rectángulo visualmente
+    // Espaciado dinámico hasta el pie de página
     if ($gap > 0) {
         $mpdf->WriteHTML('<div style="height:'.round($gap,2).'mm;border-left:2px solid #000;border-right:2px solid #000;margin:0;padding:0;font-size:0;line-height:0"> </div>');
     }
@@ -283,7 +272,7 @@ if ($formato === 'pdf') {
     $tg = number_format($totalGeneral,2,',','.').' €';
     $ip = number_format($ivaPorcentaje,2).'%';
 
-    // Footer: cierra el rectángulo por abajo (border completo)
+    // Pie de página del PDF
     $mpdf->WriteHTML('
     <table width="100%" style="border-collapse:collapse;border-left:2px solid #000;border-right:2px solid #000;border-bottom:2px solid #000;border-top:1px solid #ccc;font-family:Times New Roman">
       <tr>

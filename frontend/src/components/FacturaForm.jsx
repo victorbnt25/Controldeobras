@@ -40,7 +40,7 @@ export default function FacturaForm({ factura, onSaved, onCancel }) {
     }
   }, []);
 
-  const cargarCorrelativo = async () => {
+  const cargarCorrelativo = async () => { // Obtiene el número de factura disponible
     try {
       const res = await api.obtenerProximoCorrelativo('factura');
       if (res && res.next) {
@@ -162,7 +162,7 @@ export default function FacturaForm({ factura, onSaved, onCancel }) {
   const totalBruto = lineas.reduce(
     (acc, item) => acc + item.cantidad * item.precio_unitario,
     0
-  );
+  ); // Cálculos financieros
 
   const importeIva = totalBruto * (iva / 100);
   const totalFinal = totalBruto + importeIva;

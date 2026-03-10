@@ -5,8 +5,7 @@ import { useConfig } from "../context/ConfigContext";
 export default function Configuracion() {
     const { refrescarConfiguracion } = useConfig();
 
-    // Estado para Empresa
-    const [datosEmpresa, setDatosEmpresa] = useState({
+    const [datosEmpresa, setDatosEmpresa] = useState({ // Datos de la empresa
         nombre_empresa: "",
         nombre_ceo: "",
         cif_dni: "",
@@ -17,15 +16,13 @@ export default function Configuracion() {
         email_empresa: ""
     });
 
-    // Estado para Trabajadores
-    const [trabajadores, setTrabajadores] = useState([]);
+    const [trabajadores, setTrabajadores] = useState([]); // Lista de trabajadores
     const [idTrabajadorSeleccionado, setIdTrabajadorSeleccionado] = useState("");
     const [datosTrabajador, setDatosTrabajador] = useState(null);
 
-    // Estado de UI
-    const [seccionActiva, setSeccionActiva] = useState(null); // 'empresa' | 'trabajador' | null
-    const [mensaje, setMensaje] = useState(null);
-    const [error, setError] = useState(null);
+    const [seccionActiva, setSeccionActiva] = useState(null); // 'empresa' | 'trabajador' | null (UI)
+    const [mensaje, setMensaje] = useState(null); // Feedback de éxito
+    const [error, setError] = useState(null); // Feedback de error
     const [cargando, setCargando] = useState(false);
 
     useEffect(() => {
@@ -51,7 +48,7 @@ export default function Configuracion() {
         }
     };
 
-    // --- LÓGICA EMPRESA ---
+    // --- Datos de empresa ---
     const alCambioEmpresa = (e) => {
         const { name, value } = e.target;
         setDatosEmpresa(prev => ({ ...prev, [name]: value }));
@@ -84,7 +81,7 @@ export default function Configuracion() {
         }
     };
 
-    // --- LÓGICA TRABAJADOR ---
+    // --- Datos de trabajador ---
     const alSeleccionarTrabajador = (e) => {
         const id = e.target.value;
         setIdTrabajadorSeleccionado(id);
@@ -137,7 +134,7 @@ export default function Configuracion() {
                 {mensaje && <div className="alert alert-success mb-3 shadow-sm">{mensaje}</div>}
                 {error && <div className="alert alert-danger mb-3 shadow-sm">{error}</div>}
 
-                {/* ACORDEÓN 1: AJUSTES DE EMPRESA */}
+                {/* Empresa */}
                 <div className="tarjeta-corporativa mb-3">
                     <div
                         className="p-3 d-flex justify-content-between align-items-center bg-white border-bottom"
@@ -243,7 +240,7 @@ export default function Configuracion() {
                     )}
                 </div>
 
-                {/* ACORDEÓN 2: AJUSTES DE TRABAJADOR */}
+                {/* Tarifas de personal */}
                 <div className="tarjeta-corporativa mb-3">
                     <div
                         className="p-3 d-flex justify-content-between align-items-center bg-white border-bottom"

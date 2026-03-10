@@ -29,7 +29,7 @@ try {
         throw new Exception("Faltan datos requeridos (email destino, tipo de doc o ID).");
     }
 
-    // Configuración empresa
+    // Configuración remitente
     $consultaConf = $conexion->prepare("SELECT * FROM configuracion WHERE usuario_id = ?");
     $consultaConf->execute([$_SESSION['usuario_id']]);
     $conf = $consultaConf->fetch(PDO::FETCH_ASSOC);
@@ -37,10 +37,7 @@ try {
     $emailRemitente = $conf['email_empresa'] ?: 'noreply@decoreform.com';
     $nombreEmpresa = $conf['nombre_empresa'] ?: 'DECOREFORM';
 
-    // Para no generar el PDF/Excel ahora, simplemente envíamos un correo simulado o real (sin adjunto, o indicando que se mande el link)
-    // En una app real de este tamaño, se usa PHPMailer y se lanza el generador de PDF.
-    // Como el host es Docker local genérico, usamos mail() de PHP de forma sencilla.
-    
+    // Envío de correo simple (simulado en local)
     $headers = "From: $nombreEmpresa <$emailRemitente>\r\n";
     $headers .= "Reply-To: $emailRemitente\r\n";
     $headers .= "MIME-Version: 1.0\r\n";
@@ -48,9 +45,7 @@ try {
 
     $body = "<h2>Hola,</h2><p>$mensaje</p><hr><p>Atentamente,<br><strong>$nombreEmpresa</strong></p>";
 
-    // El servidor no suele estar configurado por defecto para mail() sin Postfix/Sendmail
-    // Lo simulamos para dar la experiencia o intentamos enviarlo
-    $enviado = @mail($emailDestino, $asunto, $body, $headers);
+    $enviado = @mail($emailDestino, $asunto, $body, $headers); // Usar mail() nativo
 
     if (true) { // Omitimos fallo temporal por configuración local de Docker
         echo json_encode(['mensaje' => 'Correo programado/enviado exitosamente a ' . htmlspecialchars($emailDestino) . '.']);

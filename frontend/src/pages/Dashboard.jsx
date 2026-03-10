@@ -57,7 +57,7 @@ export default function Dashboard() {
   const datosGrafico = datos.grafico_meses || [];
   const datosDistribucion = datos.grafico_distribucion || [];
 
-  // Generar años para el select (últimos 5 años)
+  // Últimos 5 años para el select
   const años = Array.from({ length: 5 }, (_, i) => new Date().getFullYear() - i);
   const mesesArr = [
     { id: 1, nombre: "Enero" }, { id: 2, nombre: "Febrero" }, { id: 3, nombre: "Marzo" },
@@ -69,7 +69,7 @@ export default function Dashboard() {
   return (
     <div className="diseño-corporativo">
 
-      {/* CABECERA Y FILTROS */}
+      {/* Cabecera y filtros */}
       <div className="cabecera-pagina">
         <div>
           <h1 className="titulo-pagina">Resumen Financiero</h1>
@@ -120,7 +120,7 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* KPIs */}
+      {/* KPIs principales */}
       <div className="rejilla-kpi">
         <IndicadorClave titulo={tipoFiltro === 'month' ? "Gastos del Mes" : "Gastos del Año"} valor={gastos} color="rojo" icono="bi-graph-down-arrow" />
         <IndicadorClave titulo={tipoFiltro === 'month' ? "Ingresos del Mes" : "Ingresos del Año"} valor={ingresos} color="verde" icono="bi-graph-up-arrow" />
@@ -128,7 +128,7 @@ export default function Dashboard() {
         <IndicadorClave titulo="Beneficio Histórico" valor={datos.total_historico ?? 0} color="morado" icono="bi-trophy" />
       </div>
 
-      {/* GRÁFICO PRINCIPAL */}
+      {/* Gráfico de evolución */}
       <div className="tarjeta-corporativa p-4 shadow-sm mb-4" id="grafico-principal">
         <div className="d-flex justify-content-between align-items-center mb-3">
           <h5 className="fw-bold text-dark m-0">Evolución {tipoFiltro === 'month' ? 'Diaria' : 'Mensual'}</h5>
@@ -161,7 +161,7 @@ export default function Dashboard() {
         </ResponsiveContainer>
       </div>
 
-      {/* SEGUNDA FILA */}
+      {/* Distribución y comparativa */}
       <div className="row g-4">
         <div className="col-md-6">
           <div className="tarjeta-corporativa p-3 shadow-sm h-100">

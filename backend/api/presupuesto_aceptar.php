@@ -26,7 +26,7 @@ $presupuestoId = (int)$datos['presupuesto_id'];
 try {
     $conexion->beginTransaction();
 
-    // 1. Obtener presupuesto
+    // 1. Cargar presupuesto
     $consulta = $conexion->prepare("
         SELECT *
         FROM presupuestos
@@ -40,7 +40,7 @@ try {
         throw new Exception('Presupuesto no encontrado o no le pertenece');
     }
 
-    // 2. Comprobar si ya existe obra
+    // 2. Verificar si ya tiene obra asociada
     $consultaCheck = $conexion->prepare("
         SELECT id, numero_obra
         FROM obras
@@ -60,7 +60,7 @@ try {
         exit;
     }
 
-    // 3. Cambiar estado si no está aceptado
+    // 3. Marcar como aceptado
     if ($presupuesto['estado'] !== 'aceptado') {
         $consultaAct = $conexion->prepare("
             UPDATE presupuestos 
@@ -70,7 +70,7 @@ try {
         $consultaAct->execute([$presupuestoId, $usuario_id]);
     }
 
-    // 4. Generar número obra
+    // 4. Generar referencia OB-YYYY-XXX
     $anio = date('Y');
 
     $consultaCorr = $conexion->prepare("
@@ -84,7 +84,7 @@ try {
     $correlativo = str_pad($fila['correlativo'], 3, '0', STR_PAD_LEFT);
     $numeroObra = "OB-" . $anio . "-" . $correlativo;
 
-    // 5. Crear obra
+    // 5. Crear registro de obra
     $consultaIns = $conexion->prepare("
         INSERT INTO obras
         (presupuesto_id, cliente_id, numero_obra, titulo, descripcion, presupuesto_total, usuario_id)

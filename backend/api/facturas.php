@@ -8,13 +8,10 @@ $conexion = obtenerConexionBD();
 requerirRol('usuario');
 $usuario_id = $_SESSION['usuario_id'];
 
-// El preflight OPTIONS se maneja centralizadamente en cors.php
-
 
 switch ($_SERVER['REQUEST_METHOD']) {
     case 'GET':
-        if (isset($_GET['id'])) {
-            // Detalle de una factura
+        if (isset($_GET['id'])) { // Ver detalle
             $consulta = $conexion->prepare("
                 SELECT f.*, c.nombre as cliente_nombre, c.cif_dni as cliente_cif
                 FROM facturas f
@@ -31,8 +28,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
             }
             
             enviarRespuesta($factura ?: null);
-        } else {
-            // Obtener facturas del usuario (con opción de filtrado)
+        } else { // Listado con filtros
             $query = "
                 SELECT f.*, c.nombre as cliente_nombre, c.cif_dni as cliente_cif
                 FROM facturas f
@@ -195,8 +191,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
                 $usuario_id
             ]);
             
-            // Reemplazar items
-            $conexion->prepare("DELETE FROM factura_items WHERE factura_id=?")->execute([$id]);
+            $conexion->prepare("DELETE FROM factura_items WHERE factura_id=?")->execute([$id]); // Borrar items antiguos
             if (isset($datos['items']) && is_array($datos['items'])) {
                 $consultaItem = $conexion->prepare("INSERT INTO factura_items (factura_id, descripcion, cantidad, precio_unitario) VALUES (?, ?, ?, ?)");
                 foreach ($datos['items'] as $item) {
@@ -238,7 +233,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         
         $conexion->beginTransaction();
         try {
-            // 1. Obtener presupuesto_id y estado antes de borrar
+            // Validar estado antes de borrar
             $consultaGet = $conexion->prepare("SELECT estado, presupuesto_id FROM facturas WHERE id = ? AND usuario_id = ?");
             $consultaGet->execute([$id, $usuario_id]);
             $f = $consultaGet->fetch(PDO::FETCH_ASSOC);

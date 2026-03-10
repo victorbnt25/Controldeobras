@@ -1,6 +1,4 @@
-<?php
-// 1. IMPORTANTE: Silenciar errores visibles para no romper el JSON
-ini_set('display_errors', 0);
+ini_set('display_errors', 0); // No romper el JSON con errores PHP
 error_reporting(E_ALL);
 
 // Usamos try-catch global para capturar errores de inclusión
@@ -19,7 +17,6 @@ try {
 }
 
 // NOTA: No definimos enviarRespuesta() ni manejarError() aquí porque ya vienen de database.php
-
 $metodo = $_SERVER['REQUEST_METHOD'];
 
 try {
@@ -76,7 +73,7 @@ try {
 
             $conexion->beginTransaction();
 
-            // Insertar cabecera con usuario_id
+            // Insertar cabecera
             $consulta = $conexion->prepare("
                 INSERT INTO presupuestos 
                 (numero_presupuesto, fecha_presupuesto, cliente_id, descripcion_general, iva_porcentaje, estado, total_bruto, iva_importe, total_presupuesto, usuario_id) 
@@ -140,7 +137,7 @@ try {
                 }
             }
 
-            // Actualizar totales
+            // Actualizar totales de la cabecera
             $ivaPorcentaje = floatval($iva);
             $ivaImporte = $totalBruto * ($ivaPorcentaje / 100);
             $totalPresupuesto = $totalBruto + $ivaImporte;
@@ -175,7 +172,7 @@ try {
 
             $conexion->beginTransaction();
 
-            // Variable para controlar si debemos sincronizar la obra
+            // Controlar si debemos sincronizar la obra
             $sincronizarObra = false;
             $presupuestoId = $datos['id'];
 
@@ -263,7 +260,7 @@ try {
                 }
             }
 
-            // --- LÓGICA CENTRALIZADA: CREAR O ACTUALIZAR OBRA ---
+            // Sincronizar cambios con la tabla Obras
             if ($sincronizarObra) {
                 // 1. Obtener datos frescos del presupuesto
                 $consultaPre = $conexion->prepare("SELECT * FROM presupuestos WHERE id = ?");
@@ -279,7 +276,7 @@ try {
                     $tituloObra = $presupuesto['descripcion_general'] ?: 'Obra nueva';
 
                     if ($obraExistente) {
-                        // ACTUALIZAR: Si ya existe, actualizamos totales y textos
+                        // Actualizar obra existente
                         $consultaActObra = $conexion->prepare("
                             UPDATE obras 
                             SET titulo = ?, descripcion = ?, presupuesto_total = ?, cliente_id = ?
@@ -294,7 +291,7 @@ try {
                             $usuario_id
                         ]);
                     } else {
-                        // INSERTAR: Si no existe, la creamos
+                        // Crear obra si no existía
                         $consultaInsObra = $conexion->prepare("
                             INSERT INTO obras (presupuesto_id, cliente_id, numero_obra, titulo, descripcion, presupuesto_total, estado, created_at, usuario_id)
                             VALUES (?, ?, ?, ?, ?, ?, 'en_curso', NOW(), ?)
@@ -316,8 +313,7 @@ try {
             enviarRespuesta(['mensaje' => 'Presupuesto actualizado correctamente']);
             break;
 
-        case 'DELETE':
-            // Borrar presupuesto
+        case 'DELETE': // Borrar con limpieza de dependencias
             $entrada = file_get_contents("php://input");
             $datos = json_decode($entrada, true);
             
@@ -336,13 +332,13 @@ try {
 
             $conexion->beginTransaction();
 
-            // 1. Desvincular facturas asociadas a este presupuesto (para que no bloquee FK)
+            // 1. Desvincular facturas
             $conexion->prepare("UPDATE facturas SET presupuesto_id = NULL WHERE presupuesto_id = ? AND usuario_id = ?")->execute([$id, $usuario_id]);
 
-            // 2. Borrar las partidas (items) asociadas al presupuesto
+            // 2. Borrar partidas
             $conexion->prepare("DELETE FROM presupuesto_items WHERE presupuesto_id = ?")->execute([$id]);
 
-            // 3. Obtener la obra asociada y borrar sus registros dependientes antes de borrar la obra
+            // 3. Borrar obra y sus gastos vinculados
             $consultaObra = $conexion->prepare("SELECT id FROM obras WHERE presupuesto_id = ? AND usuario_id = ?");
             $consultaObra->execute([$id, $usuario_id]);
             $obrasAsociadas = $consultaObra->fetchAll(PDO::FETCH_ASSOC);

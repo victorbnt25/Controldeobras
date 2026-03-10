@@ -14,10 +14,7 @@ $metodo = $_SERVER['REQUEST_METHOD'];
 
 switch ($metodo) {
 
-    /* =======================
-       GET - OBTENER
-    ======================= */
-    case 'GET':
+    case 'GET': // Listar o ver detalle
         if (isset($_GET['id'])) {
             $proceso = $conexion->prepare(
                 "SELECT * FROM trabajadores WHERE id = ? AND usuario_id = ? AND activo = 1"
@@ -41,10 +38,7 @@ switch ($metodo) {
         }
         break;
 
-    /* =======================
-       POST → CREAR
-    ======================= */
-   case 'POST':
+    case 'POST': // Alta de trabajador
     $datos = json_decode(file_get_contents('php://input'), true);
 
     if (!is_array($datos)) {
@@ -73,7 +67,7 @@ switch ($metodo) {
         exit;
     }
 
-    // Normalizar decimales
+    // Normalizar importes
     $precioDia = isset($datos['precio_dia']) && $datos['precio_dia'] !== ''
         ? (float)str_replace(',', '.', $datos['precio_dia'])
         : null;
@@ -103,10 +97,7 @@ switch ($metodo) {
     ]);
     break;
 
-    /* =======================
-       PUT → EDITAR
-    ======================= */
-    case 'PUT':
+    case 'PUT': // Editar datos
         if (!isset($_GET['id'])) {
             http_response_code(400);
             echo json_encode(['error' => 'ID requerido']);
@@ -156,10 +147,7 @@ switch ($metodo) {
         echo json_encode(['ok' => true]);
         break;
 
-    /* =======================
-       DELETE → BAJA LÓGICA
-    ======================= */
-    case 'DELETE':
+    case 'DELETE': // Borrado lógico
         if (!isset($_GET['id'])) {
             http_response_code(400);
             echo json_encode(['error' => 'ID requerido']);

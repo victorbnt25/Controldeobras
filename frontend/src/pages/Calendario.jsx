@@ -7,17 +7,16 @@ import 'react-big-calendar/lib/css/react-big-calendar.css';
 import { toast } from 'react-toastify';
 import { motion, AnimatePresence } from 'framer-motion';
 
-// Configurar moment para español
+// Idioma español para moment
 moment.locale('es');
 const localizer = momentLocalizer(moment);
 
 export default function CalendarioPage() {
-    const [eventos, setEventos] = useState([]);
-    const [obras, setObras] = useState([]);
+    const [eventos, setEventos] = useState([]); // Eventos del calendario
+    const [obras, setObras] = useState([]); // Obras en curso
     const [cargando, setCargando] = useState(true);
 
-    // Estado del modal de nueva planificación
-    const [modalAbierto, setModalAbierto] = useState(false);
+    const [modalAbierto, setModalAbierto] = useState(false); // Modal de planificación
     const [fechaInicio, setFechaInicio] = useState(null);
     const [fechaFin, setFechaFin] = useState(null);
     const [obrasSeleccionadas, setObrasSeleccionadas] = useState([]);
@@ -34,7 +33,7 @@ export default function CalendarioPage() {
                 api.obtenerObras()
             ]);
 
-            // Convertir fechas string a objetos Date
+            // Parseo de fechas
             const eventosConvertidos = dataEventos.map(ev => ({
                 ...ev,
                 start: new Date(ev.start),
@@ -113,7 +112,7 @@ export default function CalendarioPage() {
     };
 
     const alSeleccionarEvento = async (evento) => {
-        // Evento azul: planificacion (Se puede borrar libremente)
+        // Solo se pueden borrar eventos de tipo planificación
         if (evento.type === 'planificacion') {
             setModalBorrar({
                 visible: true,

@@ -11,7 +11,7 @@ $metodo = $_SERVER['REQUEST_METHOD'];
 $pdo = obtenerConexionBD();
 $usuario_id = $_SESSION['usuario_id'];
 
-if ($metodo === 'GET') {
+if ($metodo === 'GET') { // Listado por mes/año
     $year = isset($_GET['year']) ? intval($_GET['year']) : intval(date('Y'));
     $month = isset($_GET['month']) ? intval($_GET['month']) : intval(date('n'));
 
@@ -47,7 +47,7 @@ if ($metodo === 'GET') {
         manejarError("Error al obtener los gastos generales.", 500);
     }
 } 
-elseif ($metodo === 'POST') {
+elseif ($metodo === 'POST') { // Crear nuevo gasto
     $entrada = file_get_contents("php://input");
     $datos = json_decode($entrada, true);
     if (!$datos) {
@@ -69,8 +69,7 @@ elseif ($metodo === 'POST') {
     if ($importe_base < 0) manejarError("El importe base no puede ser negativo.");
     if ($iva_porcentaje < 0 || $iva_porcentaje > 100) manejarError("El porcentaje de IVA es inválido.");
 
-    try {
-        // Validación de pertenencia al usuario_id
+    try { // Verificar que los IDs pertenecen al usuario
         $stmtVal = $pdo->prepare("SELECT id FROM clientes WHERE id = ? AND usuario_id = ?");
         $stmtVal->execute([$cliente_id, $usuario_id]);
         if (!$stmtVal->fetch()) manejarError("Cliente no válido o no autorizado.");
@@ -120,8 +119,7 @@ elseif ($metodo === 'PUT') {
     $entrada = file_get_contents("php://input");
     $datos = json_decode($entrada, true);
     
-    // Obtener ID por variable GET (?id=X) o dentro del propio JSON
-    $idGasto = isset($_GET['id']) ? intval($_GET['id']) : (isset($datos['id']) ? intval($datos['id']) : 0);
+    $idGasto = isset($_GET['id']) ? intval($_GET['id']) : (isset($datos['id']) ? intval($datos['id']) : 0); // Obtener ID del gasto
 
     if (!$idGasto || !$datos) {
         manejarError("Datos inválidos o ID del gasto no especificado.");
@@ -141,8 +139,7 @@ elseif ($metodo === 'PUT') {
     if ($importe_base < 0) manejarError("El importe base no puede ser negativo.");
     if ($iva_porcentaje < 0 || $iva_porcentaje > 100) manejarError("El porcentaje de IVA es inválido.");
 
-    try {
-        // Verificar que el gasto pertenece al usuario
+    try { // Validar propiedad y relaciones
         $stmtGasto = $pdo->prepare("SELECT id FROM gastos_generales WHERE id = ? AND usuario_id = ?");
         $stmtGasto->execute([$idGasto, $usuario_id]);
         if (!$stmtGasto->fetch()) manejarError("El gasto no existe o no tienes permiso para editarlo.");
@@ -195,7 +192,7 @@ elseif ($metodo === 'PUT') {
         manejarError("Error al actualizar el gasto general.", 500);
     }
 } 
-elseif ($metodo === 'DELETE') {
+elseif ($metodo === 'DELETE') { // Borrar gasto
     $idGasto = isset($_GET['id']) ? intval($_GET['id']) : 0;
     
     if (!$idGasto) {

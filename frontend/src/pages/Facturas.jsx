@@ -12,7 +12,7 @@ export default function Facturas() {
     const [terminoBusqueda, setTerminoBusqueda] = useState("");
     const [filtroEstado, setFiltroEstado] = useState("todos");
 
-    // Modal de confirmaciones web
+    // Modales y estados de UI
     const [modalConfirmacion, setModalConfirmacion] = useState({
         visible: false,
         mensaje: "",
@@ -135,7 +135,7 @@ export default function Facturas() {
                 forma_pago: pCompleto.forma_pago || 'Transferencia bancaria'
             };
 
-            // Calcular nombre por defecto: Factura_001-26
+            // Nombre de archivo sugerido
             const nSerie = pCompleto.numero_factura || 'Borrador';
             const extension = formato === 'excel' ? 'xlsx' : 'pdf';
             const nombreDefecto = `Factura_${nSerie.replace(/\//g, '-')}`;
@@ -349,7 +349,7 @@ export default function Facturas() {
                             <div key={f.id} className="col-12 col-md-6 col-xl-4 d-flex">
                                 <div className="card shadow border-0 position-relative w-100 flex-column" style={{ borderRadius: '12px', transition: 'all 0.3s ease' }}>
 
-                                    <div style={{ height: '6px', borderTopLeftRadius: '12px', borderTopRightRadius: '12px', backgroundColor: f.estado === 'pagada' ? '#10b981' : f.estado === 'pendiente' ? '#f59e0b' : f.estado === 'cancelada' ? '#ef4444' : '#6b7280' }}></div>
+                                    {/* Color de estado */}
 
                                     <div className="card-body p-4 d-flex flex-column h-100">
                                         <div className="d-flex justify-content-between align-items-start mb-2">

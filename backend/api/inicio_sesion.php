@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../config/cors.php';
 require_once __DIR__ . '/../config/database.php';
 
-// Configuración de Cookies seguras para login
+// Configuración de cookies segura
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
 ini_set('session.use_only_cookies', 1);
@@ -21,18 +21,13 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-// RATE LIMITING BÁSICO (Bloqueo por IP/Sesión tras 5 intentos)
-$max_intentos = 5;
-$tiempo_bloqueo = 300; // 5 minutos
-
-if (isset($_SESSION['login_intentos']) && $_SESSION['login_intentos'] >= $max_intentos) {
+if (isset($_SESSION['login_intentos']) && $_SESSION['login_intentos'] >= $max_intentos) { // Rate limit 5 intentos
     if (time() - $_SESSION['ultimo_intento_fallido'] < $tiempo_bloqueo) {
-        http_response_code(429); // Too Many Requests
+        http_response_code(429);
         echo json_encode(['error' => 'Demasiados intentos. Inténtalo de nuevo más tarde.']);
         exit;
     } else {
-        // Reset tras pasar el tiempo
-        $_SESSION['login_intentos'] = 0;
+        $_SESSION['login_intentos'] = 0; // Reset por tiempo
     }
 }
 
@@ -48,26 +43,19 @@ if (empty($nombreUsuario) || empty($password)) {
 }
 
 $conexion = obtenerConexionBD();
-// SQL INJECTION PERMITIDO PREVENIDO MEDIANTE PDO PREPARED STATEMENTS
-$consulta = $conexion->prepare("SELECT id, username, password, rol, activo FROM usuarios WHERE username = ? LIMIT 1");
+$consulta = $conexion->prepare("SELECT id, username, password, rol, activo FROM usuarios WHERE username = ? LIMIT 1"); // Usar prepared statements
 $consulta->execute([$nombreUsuario]);
 $usuario = $consulta->fetch(PDO::FETCH_ASSOC);
 
-// VERIFICACIÓN CON PASSWORD_VERIFY
 if ($usuario && $usuario['activo'] == 1 && password_verify($password, $usuario['password'])) {
-    
-    // Login correcto -> Reset rate limiting
-    $_SESSION['login_intentos'] = 0;
-
-    // PREVENCIÓN DE FIJACIÓN DE SESIÓN (Regeneración FORZADA de ID)
-    session_regenerate_id(true); 
+    $_SESSION['login_intentos'] = 0; // Login OK
+    session_regenerate_id(true); // Evitar fijación de sesión
     
     $_SESSION['usuario_id'] = $usuario['id'];
     $_SESSION['username'] = $usuario['username'];
     $_SESSION['rol'] = $usuario['rol'];
     $_SESSION['ultimo_acceso'] = time();
     
-    // No enviar datos de la password
     echo json_encode([
         'mensaje' => 'Inicio de sesión exitoso',
         'usuario' => [
@@ -76,21 +64,9 @@ if ($usuario && $usuario['activo'] == 1 && password_verify($password, $usuario['
             'rol' => $usuario['rol']
         ]
     ]);
-} else {
-    // LOGIN FALLIDO -> Aumentar intentos
+} else { // Fallo en el login
     $_SESSION['login_intentos'] = ($_SESSION['login_intentos'] ?? 0) + 1;
     $_SESSION['ultimo_intento_fallido'] = time();
-
     http_response_code(401);
-    // DEBUG TEMPORAL - BORRAR DESPUÉS
-    echo json_encode([
-        'error' => 'Credenciales inválidas o acceso denegado.',
-        'debug' => [
-            'usuario_encontrado' => $usuario ? true : false,
-            'activo' => $usuario['activo'] ?? 'N/A',
-            'username_buscado' => $nombreUsuario,
-            'hash_en_bd' => $usuario ? substr($usuario['password'], 0, 20) . '...' : 'N/A',
-            'password_verify' => $usuario ? password_verify($password, $usuario['password']) : false
-        ]
-    ]);
+    echo json_encode(['error' => 'Usuario o contraseña incorrectos.']);
 }

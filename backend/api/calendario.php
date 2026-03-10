@@ -15,7 +15,7 @@ try {
     exit;
 }
 
-// 0. Auto-migración (Crear tabla planificacion_obras si no existe)
+// Asegura que existe la tabla de planificación
 $checkTabla = $conexion->prepare("
     SELECT COUNT(*) FROM INFORMATION_SCHEMA.TABLES 
     WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = 'planificacion_obras'
@@ -40,7 +40,7 @@ if ($metodo === 'GET') {
     try {
         $eventos = [];
 
-        // 1. Añadir Planificaciones Específicas Diarias
+        // Carga eventos: obras planificadas y jornadas
         $consultaPlan = $conexion->prepare("
             SELECT po.id, po.fecha, o.titulo, o.numero_obra 
             FROM planificacion_obras po
@@ -63,27 +63,8 @@ if ($metodo === 'GET') {
         }
 
         /* 
-        // 2. Añadir Jornadas de Trabajadores
-        $consultaJornadas = $conexion->prepare("
-            SELECT oj.id, oj.fecha, oj.cantidad as horas, t.nombre as trabajador, IFNULL(o.titulo, o.numero_obra) as obra
-            FROM obra_jornadas oj 
-            JOIN obras o ON oj.obra_id = o.id 
-            JOIN trabajadores t ON oj.trabajador_id = t.id 
-            WHERE o.usuario_id = ?
-        ");
-        $consultaJornadas->execute([$usuario_id]);
-        while ($jornada = $consultaJornadas->fetch(PDO::FETCH_ASSOC)) {
-            $eventos[] = [
-                'id' => 'jornada_' . $jornada['id'],
-                'db_id' => $jornada['id'],
-                'title' => $jornada['trabajador'] . (trim($jornada['obra']) ? (' (' . $jornada['obra'] . ')') : ''),
-                'start' => $jornada['fecha'],
-                'end' => $jornada['fecha'],
-                'allDay' => true,
-                'type' => 'jornada',
-                'color' => '#16a34a' // Verde para operarios/jornadas
-            ];
-        } 
+        // Jornadas de Trabajadores (opcional)
+        ... 
         */
 
         echo json_encode($eventos);
@@ -107,7 +88,7 @@ if ($metodo === 'GET') {
 
         if (!is_array($obras_ids)) $obras_ids = [$obras_ids];
 
-        // Validar obras del usuario
+        // Verificar que las obras pertenecen al usuario
         $obrasValidasIds = [];
         $inQuery = implode(',', array_fill(0, count($obras_ids), '?'));
         $checkObras = $conexion->prepare("SELECT id FROM obras WHERE id IN ($inQuery) AND usuario_id = ?");

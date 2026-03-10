@@ -19,8 +19,8 @@ $metodo = $_SERVER['REQUEST_METHOD'];
 
 if ($metodo === 'GET') {
     try {
-        // Recibir filtros
-        $tipo = $_GET['type'] ?? 'month'; // 'month' | 'year'
+        // Filtros de fecha
+        $tipo = $_GET['type'] ?? 'month'; 
         $año = intval($_GET['year'] ?? date('Y'));
         $mes = intval($_GET['month'] ?? date('n'));
 
@@ -35,7 +35,7 @@ if ($metodo === 'GET') {
             $sqlJornadas = "JOIN obras o ON oj.obra_id = o.id WHERE o.usuario_id = $usuario_id AND YEAR(oj.fecha) = $año";
         }
 
-        // 1. KPIs (Ingresos, Gastos, Beneficio del periodo)
+        // 1. KPIs principales
         $consultaIngresos = $conexion->query("
             SELECT COALESCE(SUM(total_factura), 0) 
             FROM facturas 
@@ -61,7 +61,7 @@ if ($metodo === 'GET') {
         ");
         $totalHistorico = $consultaHistorico->fetchColumn();
 
-        // 2. GRÁFICO PRINCIPAL (Evolución)
+        // 2. Gráfico de evolución
         $datosGrafico = [];
         
         if ($tipo === 'month') {
@@ -106,7 +106,7 @@ if ($metodo === 'GET') {
             }
         }
 
-        // 3. DISTRIBUCIÓN DE GASTOS
+        // 3. Reparto de gastos por tipo
         $distribucion = [];
         
         // Gastos generales agrupados

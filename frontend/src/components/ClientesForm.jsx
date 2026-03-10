@@ -11,7 +11,7 @@ const ClientesForm = ({ cliente, onCreated, onCancel }) => {
   });
   const [modalConfirmacion, setModalConfirmacion] = useState({ visible: false });
 
-  useEffect(() => {
+  useEffect(() => { // Si recibimos 'cliente', entramos en edición
     if (cliente) {
       setDatosFormulario({
         nombre: cliente.nombre || "",
@@ -29,7 +29,7 @@ const ClientesForm = ({ cliente, onCreated, onCancel }) => {
     }
   }, [cliente]);
 
-  const buscarDatosPorCP = async (cp) => {
+  const buscarDatosPorCP = async (cp) => { // API externa para autocompletar ciudad/población
     if (cp.length === 5) {
       try {
         const res = await fetch(`https://api.zippopotam.us/es/${cp}`);

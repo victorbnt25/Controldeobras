@@ -19,8 +19,7 @@ $metodo = $_SERVER['REQUEST_METHOD'];
 
 try {
     switch ($metodo) {
-        case 'GET':
-            // Migración: añadir columnas de proveedor si no existen
+        case 'GET': // Migración automática de columnas
             $checkCol = $conexion->prepare(
                 "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
                  WHERE TABLE_SCHEMA = DATABASE() 
@@ -66,8 +65,7 @@ try {
                 try { $conexion->exec("ALTER TABLE gastos_generales ADD COLUMN proveedor_id INT NULL, ADD COLUMN cliente_id INT NULL"); } catch (Exception $e) {}
             }
 
-            if (isset($_GET['id'])) {
-                // Detalle de una obra del usuario
+            if (isset($_GET['id'])) { // Ver detalle de obra
                 $consulta = $conexion->prepare("
                     SELECT 
                         o.*, 
@@ -114,8 +112,7 @@ try {
                 }
 
                 echo json_encode($obra ?: null);
-            } else {
-                // Listado de obras del usuario (solo las que tienen presupuesto aceptado)
+            } else { // Listado de obras aceptadas
                 $sql = "
                     SELECT 
                         o.*, 
@@ -136,32 +133,7 @@ try {
             }
             break;
 
-        case 'POST':
-            // Migración en POST: añadir columnas de proveedor si no existen
-            $checkColPost = $conexion->prepare(
-                "SELECT COUNT(*) FROM INFORMATION_SCHEMA.COLUMNS 
-                 WHERE TABLE_SCHEMA = DATABASE() 
-                   AND TABLE_NAME = 'obra_jornadas' 
-                   AND COLUMN_NAME = 'proveedor_id'"
-            );
-            $checkColPost->execute();
-            if ((int)$checkColPost->fetchColumn() === 0) {
-                try {
-                    $conexion->exec("ALTER TABLE obra_jornadas 
-                        ADD COLUMN proveedor_id INT NULL,
-                        ADD COLUMN importe_proveedor DECIMAL(10,2) NULL,
-                        MODIFY COLUMN tipo ENUM('dia', 'medio', 'sabado', 'hora', 'proveedor'),
-                        MODIFY COLUMN trabajador_id INT NULL");
-                } catch (Exception $e) { /* Ignorar */ }
-            } else {
-                try {
-                    $conexion->exec("ALTER TABLE obra_jornadas 
-                        MODIFY COLUMN tipo ENUM('dia', 'medio', 'sabado', 'hora', 'proveedor'),
-                        MODIFY COLUMN trabajador_id INT NULL");
-                } catch (Exception $e) { /* Ignorar */ }
-            }
-
-            // CREAR NUEVO GASTO O JORNADA
+            case 'POST': // Registrar gasto o jornada
             $entradaBruta = file_get_contents("php://input");
             $datos = json_decode($entradaBruta, true);
 
@@ -182,7 +154,7 @@ try {
                 exit;
             }
 
-            // CASO 1: IMPUTAR HORAS DE TRABAJADOR
+            // Caso 1: Horas de trabajador
             $idTrabajador = $datos['trabajador_id'] ?? null;
             $idProveedor  = $datos['proveedor_id']  ?? null;
             $cantidad = $datos['cantidad'] ?? $datos['horas'] ?? null;
@@ -227,7 +199,7 @@ try {
                 
                 echo json_encode(['mensaje' => 'Horas imputadas correctamente']);
 
-            // CASO 2: REGISTRAR COSTE DE PROVEEDOR EN MANO DE OBRA
+            // Caso 2: Gasto de proveedor
             } elseif ($idProveedor && isset($datos['importe']) && $tipoRegistro === 'jornada') {
                 $fecha = $datos['fecha'] ?? date('Y-m-d');
 
@@ -250,7 +222,7 @@ try {
 
                 echo json_encode(['mensaje' => 'Coste de proveedor registrado correctamente']);
 
-            // CASO 3: CREAR GASTO GENERAL (EN GASTOS_GENERALES)
+            // Caso 3: Gasto directo
             } elseif ($importe !== null) {
                 // Obtenemos el cliente_id de la obra
                 $consultCli = $conexion->prepare("SELECT cliente_id FROM obras WHERE id = ?");

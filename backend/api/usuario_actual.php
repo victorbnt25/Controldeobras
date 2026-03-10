@@ -1,7 +1,7 @@
 <?php
 require_once __DIR__ . '/../config/cors.php';
 
-// Configuración recomendada de cookies
+// Configuración de sesión segura
 ini_set('session.cookie_httponly', 1);
 ini_set('session.cookie_secure', 1);
 ini_set('session.use_only_cookies', 1);

@@ -38,7 +38,7 @@ export default function PresupuestoForm({ presupuesto, onSaved, onCancel }) {
     }
   }, []);
 
-  const cargarCorrelativo = async () => {
+  const cargarCorrelativo = async () => { // Lógica para sugerir el número siguiente
     try {
       const res = await api.obtenerProximoCorrelativo('presupuesto');
       if (res && res.next) {
@@ -158,9 +158,9 @@ export default function PresupuestoForm({ presupuesto, onSaved, onCancel }) {
   const totalBruto = lineas.reduce(
     (acc, item) => acc + item.cantidad * item.precio_unitario,
     0
-  );
+  ); // Acumulador del bruto
 
-  const importeIva = totalBruto * (iva / 100);
+  const importeIva = totalBruto * (iva / 100); // Cálculo de IVA e importes finales
   const totalFinal = totalBruto + importeIva;
 
   const alGuardarPresupuesto = async () => {

@@ -76,7 +76,7 @@ export default function Proveedores() {
 
   return (
     <div className="diseño-corporativo">
-      {/* CABECERA PRINCIPAL */}
+      {/* Cabecera principal */}
       <div className="cabecera-pagina mb-4 gap-3">
         <div>
           <h1 className="titulo-pagina">Directorio de Proveedores</h1>

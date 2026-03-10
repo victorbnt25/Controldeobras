@@ -11,8 +11,7 @@ $usuario_id = $_SESSION['usuario_id'];
 switch ($_SERVER['REQUEST_METHOD']) {
 
     case 'GET':
-        if (!isset($_GET['id'])) {
-            // SOLO clientes del usuario y activos
+        if (!isset($_GET['id'])) { // Listar solo clientes activos del usuario
             $consulta = $conexion->prepare(
                 "SELECT * FROM clientes WHERE usuario_id = ? AND activo = 1 ORDER BY nombre ASC"
             );

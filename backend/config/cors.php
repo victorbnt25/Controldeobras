@@ -2,8 +2,7 @@
 // backend/config/cors.php
 // DEBUG: die("CORS_LOADED");
 
-// 1. Determinar el origen permitido
-$allowed_origins = [
+$allowed_origins = [ // Dominios permitidos
     'http://localhost:3003', 
     'http://localhost:3004', 
     'http://localhost:3002',
@@ -12,26 +11,22 @@ $allowed_origins = [
 ];
 $origin = $_SERVER['HTTP_ORIGIN'] ?? '';
 
-// Permitir cualquier origen que termine en .totalh.com, .controldeobras.es o localhost
+// Validar dominio (local o producción)
 if (in_array($origin, $allowed_origins) || preg_match('/^https?:\/\/(localhost|.*\.totalh\.com|.*\.controldeobras\.es|controldeobras\.es)(:[0-9]+)?$/', $origin)) {    
     header("Access-Control-Allow-Origin: $origin");
 } else {
-    // Fallback seguro
-    header("Access-Control-Allow-Origin: http://localhost:3003");
+    header("Access-Control-Allow-Origin: http://localhost:3003"); // Fallback
 }
 
 
-// 2. Cabeceras comunes para CORS
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS");
 header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-With, X-Auth-Token");
 
-// 3. Manejo explícito de Preflight (OPTIONS)
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(204); // No Content es estándar para OPTIONS
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') { // Manejo de preflight
+    http_response_code(204);
     exit();
 }
 
-// 4. Content-Type por defecto para el resto de la API
-header("Content-Type: application/json; charset=UTF-8");
+header("Content-Type: application/json; charset=UTF-8"); // Salida en JSON
 

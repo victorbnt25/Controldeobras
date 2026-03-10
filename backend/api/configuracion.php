@@ -1,7 +1,7 @@
 <?php
 ini_set('display_errors', 0);
 error_reporting(E_ALL);
-// Aumentar límites para imágenes en Base64
+// Límites de PHP para subida de logos y memoria
 ini_set('post_max_size', '20M');
 ini_set('memory_limit', '256M');
 ini_set('upload_max_filesize', '20M');
@@ -24,14 +24,12 @@ $metodo = $_SERVER['REQUEST_METHOD'];
 
 try {
     switch ($metodo) {
-        case 'GET':
-            // Obtener la configuración específica del usuario
+        case 'GET': // Cargar configuración
             $consulta = $conexion->prepare("SELECT * FROM configuracion WHERE usuario_id = ? LIMIT 1");
             $consulta->execute([$usuario_id]);
             $configuracion = $consulta->fetch(PDO::FETCH_ASSOC);
             
-            if (!$configuracion) {
-                // Si no existe, creamos una por defecto para este usuario para evitar errores
+            if (!$configuracion) { // Configuración por defecto el primer acceso
                 $consultaIns = $conexion->prepare("INSERT INTO configuracion (nombre_empresa, usuario_id) VALUES ('Mi Empresa', ?)");
                 $consultaIns->execute([$usuario_id]);
                 $id = $conexion->lastInsertId();
@@ -53,8 +51,7 @@ try {
             break;
 
         case 'POST':
-        case 'PUT':
-            // Actualizar configuración del usuario
+        case 'PUT': // Guardar cambios
             $datos = json_decode(file_get_contents("php://input"), true);
             
             if (!$datos) {
@@ -65,8 +62,7 @@ try {
                 throw new Exception("JSON inválido recibido");
             }
             
-            // Buscamos si ya tiene fila activa
-            $consultaCheck = $conexion->prepare("SELECT id FROM configuracion WHERE usuario_id = ?");
+            $consultaCheck = $conexion->prepare("SELECT id FROM configuracion WHERE usuario_id = ?"); // Verificar existencia
             $consultaCheck->execute([$usuario_id]);
             $fila = $consultaCheck->fetch(PDO::FETCH_ASSOC);
 
@@ -89,8 +85,7 @@ try {
                     $datos['logo_url'] ?? null,
                     $usuario_id
                 ]);
-            } else {
-                // Si por alguna razón no había fila, insertamos una nueva
+            } else { // Crear nueva fila si no existía
                 $consultaIns = $conexion->prepare("
                     INSERT INTO configuracion (nombre_empresa, nombre_ceo, cif_dni, direccion, poblacion, telefono, cuenta_bancaria, email_empresa, logo_url, usuario_id)
                     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)

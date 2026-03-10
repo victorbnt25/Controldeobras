@@ -11,7 +11,7 @@ export const ConfigProvider = ({ children }) => {
     const [error, setError] = useState(null);
 
     const cargarConfigDeApi = async () => {
-        // Solo intentar cargar si hay usuario
+        // Cargar configuración si hay sesión
         if (!usuario) {
             setCargando(false);
             return;
